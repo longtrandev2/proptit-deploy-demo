@@ -9,3 +9,6 @@ backend/target/
 .vscode/
 *.iml
 .DS_Store
+
+# Claude Code worktrees
+.claude/
