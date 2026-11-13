@@ -63,13 +63,16 @@ docker compose logs -f backend      # xem log
 docker compose down                 # dừng (giữ dữ liệu); thêm -v để xoá cả dữ liệu
 ```
 
-**Cách 2: chỉ chạy backend** (profile `dev`, dùng H2, không cần MySQL), cần JDK 21 và Maven:
+**Cách 2: không cần Docker** (profile `dev`, dùng H2 trong bộ nhớ, không cần MySQL), cần JDK 21+ và Maven.
+Spring Boot phục vụ luôn thư mục `frontend/public`, nên FE và API cùng chạy ở `http://localhost:8080`:
 
 ```bash
 cd backend
-mvn spring-boot:run
-# http://localhost:8080/api/info
+mvn spring-boot:run "-Dspring-boot.run.arguments=--spring.web.resources.static-locations=file:../frontend/public/"
+# Mở http://localhost:8080 (sửa file trong frontend/public rồi F5 là thấy ngay)
 ```
+
+Chỉ cần API thì bỏ phần `-Dspring-boot.run.arguments=...`. Lưu ý: mở thẳng file `index.html` (file://) sẽ không gọi được API, vì frontend gọi bằng đường dẫn tương đối `/api/...`.
 
 ## API
 
