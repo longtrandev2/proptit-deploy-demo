@@ -1,0 +1,11 @@
+# Thông tin nhạy cảm
+.env
+
+# Build output
+backend/target/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store

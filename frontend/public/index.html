@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ProPTIT Guestbook</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>ProPTIT Guestbook</h1>
+      <p>Dự án thực hành Buổi 12 — Quy trình deploy cơ bản. Mỗi lời nhắn bạn gửi đi qua đủ các tầng: DNS → Firewall → Nginx → Spring Boot → MySQL.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="card-head">
+        <h2>Hành trình của request</h2>
+        <div class="muted">
+          <span id="checked-at">Đang kiểm tra…</span>
+          <button id="recheck" class="link" type="button">Kiểm tra lại</button>
+        </div>
+      </div>
+      <p class="muted">Trang tự kiểm tra từng tầng mỗi 5 giây. Tầng nào chưa đạt sẽ hiện gợi ý lệnh để xử lý — khoanh vùng <b>từ trong ra ngoài</b>.</p>
+
+      <ol class="steps">
+        <li class="step" data-step="domain">
+          <span class="dot"></span>
+          <div><h3>Tên miền &amp; DNS</h3><p class="detail"></p><code class="hint"></code></div>
+        </li>
+        <li class="step" data-step="https">
+          <span class="dot"></span>
+          <div><h3>HTTPS</h3><p class="detail"></p><code class="hint"></code></div>
+        </li>
+        <li class="step" data-step="nginx">
+          <span class="dot"></span>
+          <div><h3>Nginx (reverse proxy)</h3><p class="detail"></p><code class="hint"></code></div>
+        </li>
+        <li class="step" data-step="backend">
+          <span class="dot"></span>
+          <div><h3>Spring Boot (container)</h3><p class="detail"></p><code class="hint"></code></div>
+        </li>
+        <li class="step" data-step="database">
+          <span class="dot"></span>
+          <div><h3>MySQL (container)</h3><p class="detail"></p><code class="hint"></code></div>
+        </li>
+      </ol>
+
+      <div class="client" id="client"></div>
+    </section>
+
+    <section class="card">
+      <h2>Sổ lưu bút</h2>
+      <form id="form" class="form">
+        <input id="author" name="author" placeholder="Tên của bạn" maxlength="50" required>
+        <textarea id="content" name="content" placeholder="Để lại lời nhắn sau khi deploy thành công…" maxlength="500" rows="3" required></textarea>
+        <div class="form-foot">
+          <span id="form-error" class="error"></span>
+          <button type="submit" id="submit">Gửi lời nhắn</button>
+        </div>
+      </form>
+      <ul id="messages" class="messages"></ul>
+    </section>
+  </main>
+
+  <footer class="wrap muted foot">
+    API: <a href="/api/info">/api/info</a> · <a href="/api/messages">/api/messages</a>  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

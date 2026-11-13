@@ -1,0 +1,15 @@
+# Môi trường prod: mọi thông tin nhạy cảm đến từ biến môi trường (docker-compose.yml đọc từ file .env).
+server:
+  forward-headers-strategy: framework   # đọc header X-Forwarded-* do Nginx gửi sang
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      connection-timeout: 3000          # database chết thì báo lỗi sau 3 giây thay vì treo 30 giây
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false

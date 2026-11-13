@@ -1,0 +1,21 @@
+# Cấu hình chung cho mọi môi trường.
+# Nguyên tắc: code giống nhau giữa các môi trường, chỉ cấu hình khác nhau (12-factor app).
+spring:
+  application:
+    name: guestbook
+  profiles:
+    default: dev          # chạy ở máy cá nhân không cần khai báo gì; trên server dùng SPRING_PROFILES_ACTIVE=prod
+  jpa:
+    open-in-view: false
+
+server:
+  port: ${PORT:8080}      # dùng biến PORT nếu có (PaaS), mặc định 8080
+
+app:
+  version: ${APP_VERSION:dev}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health   # /actuator/health dùng cho giám sát (Uptime Kuma, UptimeRobot)

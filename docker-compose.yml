@@ -1,0 +1,60 @@
+# Cả hệ thống gồm 3 container, khởi chạy bằng một lệnh: docker compose up -d --build
+# Các giá trị ${...} được đọc từ file .env cùng thư mục (copy từ .env.example).
+#
+#   Internet -> [Nginx trên host :80/:443] -> frontend :3000 -> backend :8080 -> db :3306
+#
+# Trong mạng nội bộ của Compose, các container gọi nhau bằng TÊN SERVICE (db, backend),
+# không dùng localhost (localhost bên trong container là chính container đó).
+name: guestbook
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - db_data:/var/lib/mysql   # dữ liệu nằm ngoài container, xoá container không mất dữ liệu
+    healthcheck:
+      # Ping qua TCP (127.0.0.1) để chỉ "healthy" khi MySQL thật sự nhận kết nối mạng
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    # KHÔNG có "ports": database chỉ truy cập được từ mạng nội bộ Docker, không bao giờ mở ra Internet
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      APP_VERSION: ${APP_VERSION:-1.0.0}
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      # Chỉ bind vào loopback: dùng để kiểm tra trên chính VPS (curl localhost:8080/api/info),
+      # từ Internet không truy cập được (Docker bỏ qua UFW nên phải chặn ngay ở đây).
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy   # chỉ khởi động khi MySQL đã sẵn sàng
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      # PUBLISH_IP=0.0.0.0   -> truy cập được http://<VPS_IP>:3000 (Lab 3, để thử nghiệm)
+      # PUBLISH_IP=127.0.0.1 -> chỉ Nginx trên host gọi được (Lab 4 trở đi, mặc định)
+      - "${PUBLISH_IP:-127.0.0.1}:3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

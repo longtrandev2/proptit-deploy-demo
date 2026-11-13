@@ -1,0 +1,10 @@
+# Môi trường dev: database H2 trong bộ nhớ, tắt app là mất dữ liệu.
+spring:
+  datasource:
+    url: jdbc:h2:mem:guestbook
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
