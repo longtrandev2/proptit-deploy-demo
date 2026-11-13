@@ -43,7 +43,9 @@ public class InfoController {
     public Map<String, Object> info(HttpServletRequest request) {
         Map<String, Object> app = new LinkedHashMap<>();
         app.put("version", version);
-        app.put("profiles", environment.getActiveProfiles());
+        // Không khai báo SPRING_PROFILES_ACTIVE thì Spring dùng profile mặc định (spring.profiles.default=dev)
+        String[] profiles = environment.getActiveProfiles();
+        app.put("profiles", profiles.length > 0 ? profiles : environment.getDefaultProfiles());
         app.put("hostname", hostname());
         app.put("javaVersion", System.getProperty("java.version"));
         app.put("serverTime", OffsetDateTime.now().toString());
